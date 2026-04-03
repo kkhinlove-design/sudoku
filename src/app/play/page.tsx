@@ -176,7 +176,7 @@ function PlayContent() {
 
   // 게임 플레이 화면
   return (
-    <div className="min-h-screen p-4 pt-6">
+    <div className="min-h-screen p-2 sm:p-4 pt-4 sm:pt-6">
       <div className="max-w-lg mx-auto">
         {/* 헤더 */}
         <div className="flex items-center justify-between mb-4">

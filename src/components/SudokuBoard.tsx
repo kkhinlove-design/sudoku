@@ -337,7 +337,7 @@ export default function SudokuBoard({ puzzle, solution, onProgress, onComplete }
       </div>
 
       {/* 도구 버튼들 */}
-      <div className="flex justify-center gap-3 mt-2">
+      <div className="flex justify-center gap-2 sm:gap-3 mt-2 flex-wrap">
         <button
           onClick={handleUndo}
           disabled={history.length === 0}

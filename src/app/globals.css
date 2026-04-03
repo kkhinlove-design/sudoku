@@ -18,7 +18,9 @@
 body {
   background: linear-gradient(135deg, var(--bg-gradient-from), var(--bg-gradient-to));
   min-height: 100vh;
+  min-height: 100dvh;
   font-family: 'Pretendard', sans-serif;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
 /* 스도쿠 보드 */
@@ -151,14 +153,15 @@ body {
   border-color: #7c3aed;
 }
 
-/* 숫자 패드 */
+/* 숫자 패드 - 보드와 같은 max-width 사용 */
 .num-pad {
   display: grid;
   grid-template-columns: repeat(9, 1fr);
-  gap: 8px;
-  max-width: 460px;
+  gap: 6px;
+  width: 100%;
+  max-width: 420px;
   margin: 0 auto;
-  padding: 0 4px;
+  padding: 0;
 }
 
 .num-btn {
@@ -166,28 +169,28 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 10px 0;
-  min-height: 56px;
+  aspect-ratio: 1 / 1.15;
+  padding: 0;
   border-radius: 14px;
-  border: 2px solid #ede9fe;
+  border: 2.5px solid #d8b4fe;
   cursor: pointer;
   transition: all 0.15s ease;
   background-color: white;
   color: #7c3aed;
-  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.15);
+  box-shadow: 0 3px 10px rgba(124, 58, 237, 0.18);
   gap: 2px;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 }
 
 .num-btn-number {
-  font-size: 1.5rem;
+  font-size: clamp(1.4rem, 4vw, 2.2rem);
   font-weight: 800;
   line-height: 1.2;
 }
 
 .num-btn-count {
-  font-size: 0.65rem;
+  font-size: clamp(0.6rem, 1.5vw, 0.85rem);
   font-weight: 600;
   opacity: 0.5;
 }
@@ -208,6 +211,7 @@ body {
 .num-btn-selected {
   background-color: #7c3aed;
   color: white;
+  border-color: #7c3aed;
 }
 
 .num-btn-done {
@@ -306,4 +310,97 @@ body {
   border-radius: 2px;
   animation: confetti-fall 3s ease-in forwards;
   z-index: 1000;
+}
+
+/* ─── 반응형 ─── */
+
+/* 모바일 (작은 화면) */
+@media (max-width: 400px) {
+  .sudoku-grid {
+    max-width: 100%;
+    border-radius: 12px;
+  }
+
+  .sudoku-cell {
+    min-height: 28px;
+    font-size: 1rem;
+  }
+
+  .memo-num {
+    font-size: 0.38rem;
+  }
+
+  .num-pad {
+    gap: 4px;
+  }
+
+  .num-btn {
+    border-radius: 10px;
+    border-width: 2px;
+  }
+
+  .tool-btn {
+    padding: 8px 14px;
+    min-height: 50px;
+    border-radius: 12px;
+  }
+
+  .game-card {
+    padding: 16px;
+    border-radius: 16px;
+  }
+}
+
+/* 태블릿 */
+@media (min-width: 600px) {
+  .sudoku-grid {
+    max-width: 480px;
+  }
+
+  .sudoku-cell {
+    font-size: 1.4rem;
+  }
+
+  .memo-num {
+    font-size: 0.55rem;
+  }
+
+  .num-pad {
+    max-width: 480px;
+    gap: 8px;
+  }
+
+  .tool-btn {
+    padding: 12px 24px;
+    min-height: 60px;
+  }
+}
+
+/* PC / 큰 화면 */
+@media (min-width: 1024px) {
+  .sudoku-grid {
+    max-width: 540px;
+  }
+
+  .sudoku-cell {
+    font-size: 1.6rem;
+  }
+
+  .memo-num {
+    font-size: 0.6rem;
+  }
+
+  .num-pad {
+    max-width: 540px;
+    gap: 10px;
+  }
+
+  .tool-btn {
+    padding: 14px 28px;
+    min-height: 64px;
+  }
+
+  .game-card {
+    padding: 32px;
+  }
 }
