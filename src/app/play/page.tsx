@@ -26,7 +26,7 @@ function PlayContent() {
   const router = useRouter();
   const playerId = searchParams.get('player');
 
-  const [player, setPlayer] = useState<{ id: string; name: string; avatar_emoji: string; current_level: number } | null>(null);
+  const [player, setPlayer] = useState<{ id: string; name: string; avatar_emoji: string; current_level: number; games_played: number; games_won: number; total_score: number } | null>(null);
   const [difficulty, setDifficulty] = useState<string | null>(null);
   const [puzzle, setPuzzle] = useState<number[][] | null>(null);
   const [solution, setSolution] = useState<number[][] | null>(null);
@@ -142,6 +142,12 @@ function PlayContent() {
   if (completed) {
     const mins = Math.floor(completionTime / 60);
     const secs = completionTime % 60;
+    const newGamesPlayed = player.games_played + 1;
+    const didLevelUp = newGamesPlayed % 3 === 0;
+    const newLevel = didLevelUp ? player.current_level + 1 : player.current_level;
+    const gamesInLevel = didLevelUp ? 0 : newGamesPlayed % 3;
+    const levelProgress = (gamesInLevel / 3) * 100;
+
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <Confetti />
@@ -152,7 +158,7 @@ function PlayContent() {
             {player.name}(이)가 스도쿠를 완성했어요!
           </p>
 
-          <div className="grid grid-cols-2 gap-3 mb-6">
+          <div className="grid grid-cols-2 gap-3 mb-4">
             <div className="bg-purple-50 rounded-xl p-3">
               <div className="text-sm text-purple-400">걸린 시간</div>
               <div className="text-xl font-bold text-purple-700">
@@ -165,6 +171,41 @@ function PlayContent() {
                 +{score}점
               </div>
             </div>
+          </div>
+
+          {/* 레벨업 바 */}
+          <div className="mb-6 px-2">
+            {didLevelUp ? (
+              <div className="bg-yellow-50 border-2 border-yellow-300 rounded-xl p-4 animate-bounce-in">
+                <div className="text-2xl mb-1">🎖️</div>
+                <div className="text-lg font-bold text-yellow-600">레벨 업!</div>
+                <div className="text-3xl font-black text-purple-700 my-1">
+                  Lv.{player.current_level} → Lv.{newLevel}
+                </div>
+                <div className="progress-bar mt-2" style={{ height: '10px' }}>
+                  <div
+                    className="progress-fill"
+                    style={{ width: '100%', transition: 'width 1s ease' }}
+                  />
+                </div>
+                <div className="text-xs text-purple-400 mt-1">다음 레벨까지 3게임</div>
+              </div>
+            ) : (
+              <div className="bg-purple-50 rounded-xl p-3">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-bold text-purple-600">Lv.{newLevel}</span>
+                  <span className="text-xs text-purple-400">다음 레벨까지 {3 - gamesInLevel}게임</span>
+                  <span className="text-sm font-bold text-purple-400">Lv.{newLevel + 1}</span>
+                </div>
+                <div className="progress-bar" style={{ height: '10px' }}>
+                  <div
+                    className="progress-fill"
+                    style={{ width: `${levelProgress}%`, transition: 'width 1s ease' }}
+                  />
+                </div>
+                <div className="text-xs text-purple-400 mt-1">{gamesInLevel}/3 게임 완료</div>
+              </div>
+            )}
           </div>
 
           <div className="flex flex-col gap-2">
@@ -213,6 +254,18 @@ function PlayContent() {
             </span>
           </div>
           <Timer running={!completed} />
+        </div>
+
+        {/* 레벨 바 */}
+        <div className="flex items-center gap-2 mb-3 px-1">
+          <span className="text-xs font-bold text-purple-600 shrink-0">Lv.{player.current_level}</span>
+          <div className="progress-bar flex-1" style={{ height: '8px' }}>
+            <div
+              className="progress-fill"
+              style={{ width: `${((player.games_played % 3) / 3) * 100}%` }}
+            />
+          </div>
+          <span className="text-xs font-bold text-purple-400 shrink-0">Lv.{player.current_level + 1}</span>
         </div>
 
         {/* 보드 */}
