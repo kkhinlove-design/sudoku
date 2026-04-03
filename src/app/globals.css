@@ -153,15 +153,15 @@ body {
   border-color: #7c3aed;
 }
 
-/* 숫자 패드 - 보드와 같은 max-width 사용 */
+/* 숫자 패드 */
 .num-pad {
   display: grid;
   grid-template-columns: repeat(9, 1fr);
-  gap: 6px;
+  gap: 8px;
   width: 100%;
-  max-width: 420px;
+  max-width: 480px;
   margin: 0 auto;
-  padding: 0;
+  padding: 0 4px;
 }
 
 .num-btn {
@@ -169,29 +169,29 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  aspect-ratio: 1 / 1.15;
+  aspect-ratio: 1 / 1.2;
   padding: 0;
   border-radius: 14px;
-  border: 2.5px solid #d8b4fe;
+  border: 2.5px solid #c4b5fd;
   cursor: pointer;
   transition: all 0.15s ease;
-  background-color: white;
+  background: linear-gradient(to bottom, #ffffff, #f5f3ff);
   color: #7c3aed;
-  box-shadow: 0 3px 10px rgba(124, 58, 237, 0.18);
+  box-shadow: 0 3px 12px rgba(124, 58, 237, 0.2);
   gap: 2px;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 }
 
 .num-btn-number {
-  font-size: clamp(1.4rem, 4vw, 2.2rem);
+  font-size: clamp(1.5rem, 4vw, 2.4rem);
   font-weight: 800;
   line-height: 1.2;
 }
 
 .num-btn-count {
-  font-size: clamp(0.6rem, 1.5vw, 0.85rem);
-  font-weight: 600;
+  font-size: clamp(0.65rem, 1.5vw, 0.9rem);
+  font-weight: 700;
   opacity: 0.5;
 }
 
@@ -354,11 +354,11 @@ body {
 /* 태블릿 */
 @media (min-width: 600px) {
   .sudoku-grid {
-    max-width: 480px;
+    max-width: 500px;
   }
 
   .sudoku-cell {
-    font-size: 1.4rem;
+    font-size: 1.5rem;
   }
 
   .memo-num {
@@ -366,8 +366,8 @@ body {
   }
 
   .num-pad {
-    max-width: 480px;
-    gap: 8px;
+    max-width: 540px;
+    gap: 10px;
   }
 
   .tool-btn {
@@ -379,20 +379,25 @@ body {
 /* PC / 큰 화면 */
 @media (min-width: 1024px) {
   .sudoku-grid {
-    max-width: 540px;
+    max-width: 580px;
   }
 
   .sudoku-cell {
-    font-size: 1.6rem;
+    font-size: 1.8rem;
   }
 
   .memo-num {
-    font-size: 0.6rem;
+    font-size: 0.65rem;
   }
 
   .num-pad {
-    max-width: 540px;
-    gap: 10px;
+    max-width: 640px;
+    gap: 12px;
+  }
+
+  .num-btn {
+    border-radius: 16px;
+    border-width: 3px;
   }
 
   .tool-btn {
