@@ -7,6 +7,7 @@ import { generatePuzzle } from '@/lib/sudoku';
 import SudokuBoard from '@/components/SudokuBoard';
 import Timer from '@/components/Timer';
 import Confetti from '@/components/Confetti';
+import { startBGM, stopBGM } from '@/lib/sounds';
 
 const DIFFICULTY_LABELS: Record<string, string> = {
   easy: '쉬움 ⭐',
@@ -32,6 +33,17 @@ function PlayContent() {
   const [completed, setCompleted] = useState(false);
   const [completionTime, setCompletionTime] = useState(0);
   const [score, setScore] = useState(0);
+  const [bgmEnabled, setBgmEnabled] = useState(false);
+
+  // BGM 제어
+  useEffect(() => {
+    if (bgmEnabled && difficulty && !completed) {
+      startBGM();
+    } else {
+      stopBGM();
+    }
+    return () => stopBGM();
+  }, [bgmEnabled, difficulty, completed]);
 
   useEffect(() => {
     if (!playerId) { router.push('/'); return; }
@@ -186,9 +198,20 @@ function PlayContent() {
           >
             ← 뒤로
           </button>
-          <span className={`px-3 py-1 rounded-full text-sm font-bold ${DIFFICULTY_COLORS[difficulty]}`}>
-            {DIFFICULTY_LABELS[difficulty]}
-          </span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setBgmEnabled(prev => !prev)}
+              className={`px-3 py-1 rounded-full text-sm font-bold transition-all ${
+                bgmEnabled ? 'bg-purple-500 text-white' : 'bg-gray-100 text-gray-400'
+              }`}
+              title="배경음악"
+            >
+              {bgmEnabled ? '🔊 BGM' : '🔇 BGM'}
+            </button>
+            <span className={`px-3 py-1 rounded-full text-sm font-bold ${DIFFICULTY_COLORS[difficulty]}`}>
+              {DIFFICULTY_LABELS[difficulty]}
+            </span>
+          </div>
           <Timer running={!completed} />
         </div>
 

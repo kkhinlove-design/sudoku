@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import { playTapSound, playLineCompleteSound, playPuzzleCompleteSound, playErrorSound } from '@/lib/sounds';
 
 type Grid = number[][];
 type MemoGrid = Set<number>[][];
@@ -23,6 +24,24 @@ function serializeMemos(memos: MemoGrid): number[][][] {
 
 function deserializeMemos(data: number[][][]): MemoGrid {
   return data.map(row => row.map(cell => new Set(cell)));
+}
+
+// 행/열/박스 완성 체크
+function checkLineCompletion(grid: Grid, solution: Grid, row: number, col: number): boolean {
+  // 행 완성?
+  const rowComplete = grid[row].every((v, c) => v === solution[row][c]);
+  // 열 완성?
+  const colComplete = grid.every((r, ri) => r[col] === solution[ri][col]);
+  // 박스 완성?
+  const br = Math.floor(row / 3) * 3;
+  const bc = Math.floor(col / 3) * 3;
+  let boxComplete = true;
+  for (let r = br; r < br + 3; r++) {
+    for (let c = bc; c < bc + 3; c++) {
+      if (grid[r][c] !== solution[r][c]) boxComplete = false;
+    }
+  }
+  return rowComplete || colComplete || boxComplete;
 }
 
 export default function SudokuBoard({ puzzle, solution, onProgress, onComplete }: SudokuBoardProps) {
@@ -133,6 +152,7 @@ export default function SudokuBoard({ puzzle, solution, onProgress, onComplete }
       newGrid[row][col] = 0;
       setErrors(prev => { const n = new Set(prev); n.delete(key); return n; });
       setCorrects(prev => { const n = new Set(prev); n.delete(key); return n; });
+      playTapSound();
     } else if (solution[row][col] === num) {
       newGrid[row][col] = num;
       setErrors(prev => { const n = new Set(prev); n.delete(key); return n; });
@@ -141,11 +161,8 @@ export default function SudokuBoard({ puzzle, solution, onProgress, onComplete }
       setMemos(prev => {
         const next = prev.map(r => r.map(c => new Set(c)));
         next[row][col].clear();
-        // 같은 행
         for (let c = 0; c < 9; c++) next[row][c].delete(num);
-        // 같은 열
         for (let r = 0; r < 9; r++) next[r][col].delete(num);
-        // 같은 박스
         const br = Math.floor(row / 3) * 3;
         const bc = Math.floor(col / 3) * 3;
         for (let r = br; r < br + 3; r++) {
@@ -158,6 +175,7 @@ export default function SudokuBoard({ puzzle, solution, onProgress, onComplete }
       setErrors(prev => new Set(prev).add(key));
       setCorrects(prev => { const n = new Set(prev); n.delete(key); return n; });
       setMistakes(prev => prev + 1);
+      playErrorSound();
       setTimeout(() => {
         setErrors(prev => { const n = new Set(prev); n.delete(key); return n; });
       }, 1000);
@@ -171,9 +189,14 @@ export default function SudokuBoard({ puzzle, solution, onProgress, onComplete }
       r.every((c, ci) => c === solution[ri][ci])
     );
     if (isComplete) {
+      playPuzzleCompleteSound();
       setCompleted(true);
       const elapsed = Math.round((Date.now() - startTime) / 1000);
       onComplete?.(elapsed);
+    } else if (solution[row][col] === num && checkLineCompletion(newGrid, solution, row, col)) {
+      playLineCompleteSound();
+    } else if (solution[row][col] === num) {
+      playTapSound();
     }
   }, [selected, grid, puzzle, solution, completed, memoMode, startTime, calcProgress, onProgress, onComplete, saveHistory]);
 
@@ -229,9 +252,14 @@ export default function SudokuBoard({ puzzle, solution, onProgress, onComplete }
       r.every((c, ci) => c === solution[ri][ci])
     );
     if (isComplete) {
+      playPuzzleCompleteSound();
       setCompleted(true);
       const elapsed = Math.round((Date.now() - startTime) / 1000);
       onComplete?.(elapsed);
+    } else if (checkLineCompletion(newGrid, solution, row, col)) {
+      playLineCompleteSound();
+    } else {
+      playTapSound();
     }
   }, [hintsUsed, completed, grid, solution, selected, saveHistory, calcProgress, startTime, onProgress, onComplete]);
 
