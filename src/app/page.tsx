@@ -102,6 +102,28 @@ export default function Home() {
     localStorage.setItem('sudoku_player_id', p.id);
   };
 
+  // 친구 삭제
+  const handleDeletePlayer = async (e: React.MouseEvent, p: Player) => {
+    e.stopPropagation(); // 버튼 클릭이 부모 버튼(선택)에 전달되지 않게
+    if (!confirm(`정말 "${p.name}"을(를) 삭제할까요?\n게임 기록도 함께 삭제돼요!`)) return;
+
+    // 게임 기록 삭제
+    await supabase.from('game_history').delete().eq('player_id', p.id);
+    // 방 참가 기록 삭제
+    await supabase.from('room_players').delete().eq('player_id', p.id);
+    // 플레이어 삭제
+    await supabase.from('players').delete().eq('id', p.id);
+
+    // 현재 로그인된 플레이어가 삭제된 경우 로그아웃
+    if (player?.id === p.id) {
+      setPlayer(null);
+      localStorage.removeItem('sudoku_player_id');
+    }
+
+    // 목록 새로고침
+    loadAllPlayers();
+  };
+
   // 방 만들기
   const handleCreateRoom = () => {
     if (!player) return;
@@ -197,8 +219,8 @@ export default function Home() {
 
               <div className="space-y-2">
                 {allPlayers.map((p, idx) => (
+                  <div key={p.id} className="relative group">
                   <button
-                    key={p.id}
                     onClick={() => handleSelectPlayer(p)}
                     className="w-full text-left p-3 rounded-xl border-2 border-purple-100 hover:border-purple-400 hover:bg-purple-50 transition-all"
                   >
@@ -271,6 +293,15 @@ export default function Home() {
                       </div>
                     </div>
                   </button>
+                  {/* 삭제 버튼 */}
+                  <button
+                    onClick={(e) => handleDeletePlayer(e, p)}
+                    className="absolute top-2 right-2 w-7 h-7 rounded-full bg-red-100 text-red-400 hover:bg-red-200 hover:text-red-600 flex items-center justify-center text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity"
+                    title={`${p.name} 삭제`}
+                  >
+                    ✕
+                  </button>
+                  </div>
                 ))}
               </div>
             </div>

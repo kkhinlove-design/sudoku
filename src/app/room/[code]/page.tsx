@@ -310,6 +310,7 @@ function RoomContent({ params }: { params: Promise<{ code: string }> }) {
     const timeBonus = Math.max(0, 300 - timeSeconds);
     const totalScore = diffBonus + timeBonus;
 
+    // 승자 통계 업데이트
     await supabase.from('players').update({
       games_played: (player as unknown as Record<string, number>).games_played + 1,
       games_won: (player as unknown as Record<string, number>).games_won + 1,
@@ -324,6 +325,38 @@ function RoomContent({ params }: { params: Promise<{ code: string }> }) {
       is_winner: true,
       score: totalScore,
     });
+
+    // 패자들 통계 업데이트 (games_played +1, 승리 제외)
+    const { data: otherPlayers } = await supabase
+      .from('room_players')
+      .select('player_id')
+      .eq('room_id', rId)
+      .neq('player_id', player.id);
+
+    if (otherPlayers) {
+      for (const op of otherPlayers) {
+        const { data: loser } = await supabase
+          .from('players')
+          .select('games_played')
+          .eq('id', op.player_id)
+          .single();
+
+        if (loser) {
+          await supabase.from('players').update({
+            games_played: loser.games_played + 1,
+          }).eq('id', op.player_id);
+
+          await supabase.from('game_history').insert({
+            player_id: op.player_id,
+            room_id: rId,
+            difficulty: diff,
+            completion_time: null,
+            is_winner: false,
+            score: 0,
+          });
+        }
+      }
+    }
   }, [player]);
 
   // 방 코드 복사
