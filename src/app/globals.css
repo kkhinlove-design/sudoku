@@ -156,14 +156,13 @@ body {
 /* 숫자 패드 */
 .num-pad {
   display: grid;
-  grid-template-columns: repeat(9, 1fr);
-  gap: clamp(4px, 1.5vw, 10px);
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  gap: clamp(3px, 1.2vw, 10px);
   width: 100%;
   max-width: 480px;
   margin: 0 auto;
   padding: 0;
   box-sizing: border-box;
-  overflow: hidden;
 }
 
 .num-btn {
@@ -172,9 +171,10 @@ body {
   align-items: center;
   justify-content: center;
   aspect-ratio: 1 / 1.2;
+  min-width: 0;
   padding: 0;
-  border-radius: 14px;
-  border: 2.5px solid #c4b5fd;
+  border-radius: clamp(6px, 1.5vw, 14px);
+  border: 2px solid #c4b5fd;
   cursor: pointer;
   transition: all 0.15s ease;
   background: linear-gradient(to bottom, #ffffff, #f5f3ff);
@@ -383,8 +383,12 @@ body {
   }
 
   .num-pad {
-    max-width: 540px;
-    gap: 10px;
+    max-width: 500px;
+    gap: 7px;
+  }
+
+  .num-btn {
+    border-radius: 12px;
   }
 
   .tool-btn {

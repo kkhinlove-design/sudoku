@@ -474,8 +474,8 @@ function RoomContent({ params }: { params: Promise<{ code: string }> }) {
 
   // 게임 플레이
   return (
-    <div className="min-h-screen p-4 pt-6">
-      <div className="max-w-lg mx-auto">
+    <div className="min-h-screen p-2 sm:p-4 pt-4 sm:pt-6">
+      <div className="max-w-2xl mx-auto">
         <div className="flex items-center justify-between mb-3">
           <span className="text-sm font-bold text-purple-500">방: {room.code}</span>
           <div className="flex items-center gap-2">
